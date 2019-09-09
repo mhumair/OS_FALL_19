@@ -1,7 +1,7 @@
 # C Fundamentals
 Covers all the major contents covered in LAB 1
 
-## Creating & Opening a File
+## Summary
 
 If you've missed or dozed off during class in the previous classes no worries.
 I have compiled a basic list to get you guys covered on previous & few future concepts that need to be covered before I post the first project.
