@@ -1,4 +1,4 @@
-#Introduction To Makefiles
+# Introduction To Makefiles
 
 We started the lab reviewing the project files & in particular discussed a file known as makefile. Compiling the source code files can be tiring, especially when you have to include several source files and type the compiling command every time you need to compile. Makefiles are the solution to simplify this task.
 
@@ -6,7 +6,7 @@ Makefiles are special format files that help build and manage the projects autom
 
 For example, let’s assume we have the following source files.
 
-a. sample_main.c             ( where are main function resides )
+- sample_main.c             ( where are main function resides )
 
 - sample_header.h           ( function prototypes )
 
@@ -124,7 +124,7 @@ The argument is there to simply break the compiling steps , because if you just 
 that file already in binary form, & thus the need for breaking the compile process.
 
 And thus the final makefile looks like this :
-
+```bash
 all: sample
 
 sample: sample_main.o sample_functions.o
@@ -138,7 +138,7 @@ sample_functions.o: sample_functions.c sample_header.h
 	
 clean : 
 	rm ./*.o sample
-	
+```
 The last line simply cleans the the directory if you want a completely fresh build .
 
 So now in order to compile we simply need to place this makefile in the project folder . 
