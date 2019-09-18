@@ -1,4 +1,4 @@
-#Introduction To Makefiles
+# Introduction To Makefiles
 
 We started the lab reviewing the project files & in particular discussed a file known as makefile. Compiling the source code files can be tiring, especially when you have to include several source files and type the compiling command every time you need to compile. Makefiles are the solution to simplify this task.
 
