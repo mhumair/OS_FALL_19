@@ -6,7 +6,7 @@ Makefiles are special format files that help build and manage the projects autom
 
 For example, let’s assume we have the following source files.
 
-a. sample_main.c             ( where are main function resides )
+- sample_main.c             ( where are main function resides )
 
 - sample_header.h           ( function prototypes )
 
