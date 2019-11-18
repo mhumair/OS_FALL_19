@@ -51,15 +51,26 @@ int pthread_create(thread_id,
 
 ```
 - thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
-
+```c
+	pthread_t thread_id;
+```
 - thread_attributes	: This attr argument is used to customize various thread attributes. We’ll cover thread attributes 			     later. For now, we’ll set this to NULL to create a thread with the default attributes.
 
 - thread_function 	: The newly created thread starts running at the address of the start_rtn function. 
-
+```c
+	void *thread_function(void* no)
+	{
+        	int *no1 = (int*)no;
+        	*no1 = *no1 + 1;
+        
+	}
+```
 - thread_arg		: This function takes a single argument, arg, which is a typeless pointer. If you need to
 			  pass more than one argument to the start_rtn function, then you need to store them in a
 			  structure and pass the address of the structure as arg.
-
+```c
+	int thread_arg = 55;
+```
 **NOTE**
 When a thread is created, there is no guarantee which will run first: the newly
 created thread or the calling thread. The newly created thread has access to the process
