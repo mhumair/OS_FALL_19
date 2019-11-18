@@ -1,21 +1,30 @@
 # Introduction to Threads
 Let's first cover some terminologies before moving on to creating threads.
-###Programming Constructs
+## 1.1 Programming Constructs
 Uptill know you have been used to sequential programs. Programs that executed code sequentially i.e instructions were executed line after line.
 This way of programming dosen't help us reach the full potential of the CPU power & memory alloted to us. 
-In order to utilize these multiple-core processors we have concurrent & parralell programming . For now we'll look into concurrent programming.
+In order to utilize these multiple-core processors we have concurrent & parrallel programming . For now we'll look into concurrent programming.
 Unlike sequential programs that execute step by step a concurrent program is one in which multiple tasks can be in progress at any instant.
 Let's take the example of a restaurant. 
-In case of sequential execution 
-the waiter takes an order gives it to the cook. The cook prepares it & the waiter waits. Once the food is prepared the waiter serves it the meal & than takes the next order
+In case of sequential execution : 
+- the waiter takes an order gives it to the cook. 
+- the cook prepares it & the waiter waits 
+- Once the food is prepared the waiter serves the meal & than takes the next order
+In case of concurrent execution : 
+- the waiter takes an order gives it to the cook. - 
+- the cook prepares it & the waiter takes the next order
+- Once the food is prepared the waiter serves the meal .
+
+The key diffrence here is that the waiter dosn't wait for the preparation of the food but carries on taking orders i.e perfoming other tasks while one task is being performed. This is possible in our programs as well where we can break one task(A Single Thread) into smaller tasks(Multiple Threads) for better performance.
   
-  
+When were dealing with concurrent programs we also need to enforce : 
+- Serialization 	: Event A better happen before an Event B .
+- Mutual Exclusion 	: Event A & B must not happen at the same time .
 
-- sample_main.c             ( where are main function resides )
+## 1.2 THREADS
+A thread is a basic unit of execution of a process. When we say a program is running, it typically means that a process is loaded in memory & a single task is being performed by that process. That single task(unit of execution) is known as a thread.Threads are a way for a program to divide (termed "split") itself into two or more simultaneously (or pseudo-simultaneously) running tasks.
+Threads and processes differ from one operating system to another but, in general, a thread is contained inside a process and different threads in the same process share the same resources while different processes in the same multitasking operating system do not. Threads are lightweight, in terms of the system resources they consume, as compared with processes.
 
-- sample_header.h           ( function prototypes )
-
-- sample_functions.c        ( implementation of function prototypes )
 
 **sample_main.c**
 
