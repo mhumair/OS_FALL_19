@@ -1,6 +1,6 @@
 # Introduction to Threads
 Let's first cover some terminologies before moving on to creating threads.
-## 1.1 Programming Constructs
+### 1.1 Programming Constructs
 Uptill know you have been used to sequential programs. Programs that executed code sequentially i.e instructions were executed line after line.
 This way of programming dosen't help us reach the full potential of the CPU power & memory alloted to us. 
 In order to utilize these multiple-core processors we have concurrent & parrallel programming . For now we'll look into concurrent programming.
@@ -21,146 +21,84 @@ When were dealing with concurrent programs we also need to enforce :
 - Serialization 	: Event A better happen before an Event B .
 - Mutual Exclusion 	: Event A & B must not happen at the same time .
 
-## 1.2 THREADS
+### 1.2 THREADS
 A thread is a basic unit of execution of a process. When we say a program is running, it typically means that a process is loaded in memory & a single task is being performed by that process. That single task(unit of execution) is known as a thread.Threads are a way for a program to divide (termed "split") itself into two or more simultaneously (or pseudo-simultaneously) running tasks.
 Threads and processes differ from one operating system to another but, in general, a thread is contained inside a process and different threads in the same process share the same resources while different processes in the same multitasking operating system do not. Threads are lightweight, in terms of the system resources they consume, as compared with processes.
 
+A thread consists of the information necessary to represent an execution context
+within a process. This includes a thread ID that identifies the thread within a process, a
+set of register values, a stack, a scheduling priority and policy, a signal mask, an errno
+variable, and thread-specific data. 
+Everything within a process is sharable among the threads in a process, including the text of the executable
+program, the program’s global and heap memory, the stacks, and the file descriptors.
+The threads interfaces we’re about to see are from POSIX.1-2001. The threads interfaces, also known as ‘‘pthreads’’ for ‘‘POSIX threads. 
 
-**sample_main.c**
+
+**Thread Creation**
+
+With pthreads, when a program runs, it also starts out as a single
+process with a single thread of control also known as the main-thread. As the program runs, its behavior should be
+indistinguishable from the traditional process, until it creates more threads of control.
+Additional threads can be created by calling the pthread_create function.
 
 ```c
-#include <stdio.h>
-#include "sample_header.h"
+#include <pthread.h>
 
+int pthread_create(thread_id,
+		   thread_attributes,
+		   thread_function, 
+		   thread_arg);
+
+```
+- thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
+
+- thread_attributes	: This attr argument is used to customize various thread attributes. We’ll cover thread attributes 			     later. For now, we’ll set this to NULL to create a thread with the default attributes.
+
+- thread_function 	: The newly created thread starts running at the address of the start_rtn function. 
+
+- thread_arg		: This function takes a single argument, arg, which is a typeless pointer. If you need to
+			  pass more than one argument to the start_rtn function, then you need to store them in a
+			  structure and pass the address of the structure as arg.
+
+**NOTE**
+When a thread is created, there is no guarantee which will run first: the newly
+created thread or the calling thread. The newly created thread has access to the process
+address space.
+Just like in the case of process creation if you want all threads to complete before the program finishes the main-thread has to wait(join) for all the threads it created before terminating because if the main-thread exists before the other threads the other threads will be killed by the OS. 
+
+**THREAD JOIN**
+```c
+pthread_join(thread_id,NULL);
+```
+The final code now looks like this : 
+**thread.c**
+```c
+#include <stdio.h>
+#include <pthread.h>
+void *thread_function(void* no)
+{
+        int *no1 = (int*)no;
+        *no1 = *no1 + 1;
+        
+}
 int main(int argc, char *argv[])
 {
-        print_hello();
+            pthread_t thread_id;
+            
+            int thread_arg = 55;
+            
+            printf("The value was %d \n",thread_arg);
+            
+            pthread_create(&thread_id, NULL, thread_function, &thread_arg);
+            
+            pthread_join(thread_id,NULL);
+            
+            printf("The value is %d \n",thread_arg);
 }
 ```
-
-**sample_header.h**
-
-```c
-void print_hello();
-```
-**sample_functions.c**
-
-```c
-#include <stdio.h>
-#include "sample_header.h"
-
-
-void print_hello()
-{
-    printf("Hello AKLSALKA\n");
-}
-```
-
-The trivial way to compile the files and obtain an executable, is by running the command −
-
 ```bash
-gcc -o sample sample_main.c sample_functions.c
-```
-
-This command generates a program or binary by the name `sample`. In this example we have only two source(.c) files and we know the sequence of the function calls. Hence, it is feasible to type the above command and prepare a final program.
-
-However, for a large project where we have thousands of source code files, it becomes difficult to maintain the program builds. Infact just imagine the length of the command as the no of source files increases. 
-
-The `make` command allows you to manage large programs or groups of programs. As you begin to write large programs, you notice that re-compiling large programs takes longer time than re-compiling short programs. Moreover, you notice that you usually only work on a small section of the program ( such as a single function ), and much of the remaining program is unchanged.
-
-In this section, we see how to prepare a `makefile` for our project.
-
-To first understand makefiles, let's recall the basic steps our source code goes through before we get a program, 
-
-### Compiling :
-
-Recall that we write our source code in C, but need to compile it to machine code, i.e binary, before our computers can run it.
-
-`Compiling` source code into machine code is actually made up of smaller steps:
-
-1. preprocessing
-2. compiling
-3. assembling
-4. linking
-
-`Preprocessing` involves looking at lines that start with a '#', like #include, before everything else. For example, #include "sample_functions.h" will tell gcc to look for that header file first, since it contains content that we want to include in our program. Then, gcc will essentially replace the contents of those header files into our program.
-You can check the preprocessing by using the following command :
-```bash
-$gcc -E file.c
-```
-
-`Compiling` takes our source code, in C, and converts it to assembly code.These instructions are lower-level and can be understood by the CPU more directly, and generally operate on bytes themselves, as opposed to abstractions like variable names.
-You can generate the assembly code by using the following command :
-```bash
-$gcc -S file.c
-```
-`Assembling` The next step is to take the assembly code and translate it to instructions in binary by assembling it.
-You can generate the binary or object file by using the following command :
-```bash
-$gcc -c file.c
-```
-`Linking` Now, the final step is linking, where the contents of linked libraries, like sample_functions.c , are actually included in our program as binary.
-You can link the final program using the following command :
-```bash
-$gcc -o program file_1.o file_2.o
-```
-Since now we've cleared what compiling is let's move on to the next step.
-
-### Creating Makefiles
-
-Creating a makefile is as simple as following : 
-```bash
-$touch makefile
-```
-the term "makefile" typically refers to a file named `makefile`, which is used to build source code into an executable program. This type of file does not have a file extension.
-
-A makefile includes targets & dependencies sepearted by a `:`.Dependencies are important because they let the 'make' cmd know about the source for any target.
-
-Consider the following example −
-```bash
-sample: sample_main.o sample_functions.o
-	gcc -o sample sample_main.o sample_functions.o
-```
-Here, we tell 'make' that the target 'sample' is dependent on sample_main.o, sample_functions.o files. Hence, whenever there is a change in any of these object files, make will take action.
-
-At the same time, we need to tell 'make' how to prepare sample_main.o sample_functions.o (object or binary) files. Hence we need to define those dependencies also as follows −	
-```bash
-sample_main.o: sample_main.c sample_header.h
-	gcc -c sample_main.c
-```
-
-```bash
-sample_functions.o: sample_functions.c sample_header.h
-	gcc -c sample_functions.c
-```
-The '-c' argument after 'gcc' simply tells the compiler to generate binary(.o extension) files or in other words to simply not link external libraries or files.
-The argument is there to simply break the compiling steps , because if you just typed '$gcc sample_main.c' it won't compile as we call a function that is declared in a seperate file 'sample_functions.c', & to compile sample_main.c we need
-that file already in binary form, & thus the need for breaking the compile process.
-
-And thus the final makefile looks like this :
-```bash
-all: sample
-
-sample: sample_main.o sample_functions.o
-	gcc -o sample sample_main.o sample_functions.o
-	
-sample_main.o: sample_main.c sample_header.h
-	gcc -c sample_main.c
-	
-sample_functions.o: sample_functions.c sample_header.h
-	gcc -c sample_functions.c
-	
-clean : 
-	rm ./*.o sample
-```
-The last line simply cleans the the directory if you want a completely fresh build .
-
-So now in order to compile we simply need to place this makefile in the project folder . 
-On the terminal simply run the command to compile :	
-
-```bash
-$make all
-```
+$gcc thread.c -lphthread
+`
 
 
 
