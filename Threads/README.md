@@ -50,13 +50,14 @@ int pthread_create(thread_id,
 		   thread_arg);
 
 ```
-- thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
 ```c
 	pthread_t thread_id;
 ```
+- thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
+```c
+	NULL
+```
 - thread_attributes	: This attr argument is used to customize various thread attributes. We’ll cover thread attributes 			     later. For now, we’ll set this to NULL to create a thread with the default attributes.
-
-- thread_function 	: The newly created thread starts running at the address of the start_rtn function. 
 ```c
 	void *thread_function(void* no)
 	{
@@ -65,16 +66,19 @@ int pthread_create(thread_id,
         
 	}
 ```
-- thread_arg		: This function takes a single argument, arg, which is a typeless pointer. If you need to
-			  pass more than one argument to the start_rtn function, then you need to store them in a
-			  structure and pass the address of the structure as arg.
+- thread_function 	: The newly created thread runs this function when it starts. 
 ```c
 	int thread_arg = 55;
 ```
+- thread_arg		: The function takes only a single argument for now . If you need to
+			  pass more than one argument to thread_function, then you need to store them in a
+			  structure and pass the address of the structure as thread_arg.
+
 **NOTE**
 When a thread is created, there is no guarantee which will run first: the newly
 created thread or the calling thread. The newly created thread has access to the process
 address space.
+
 Just like in the case of process creation if you want all threads to complete before the program finishes the main-thread has to wait(join) for all the threads it created before terminating because if the main-thread exists before the other threads the other threads will be killed by the OS. 
 
 **THREAD JOIN**
