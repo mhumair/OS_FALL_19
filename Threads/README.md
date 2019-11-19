@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 ```
 **compilation**
 ```bash
-$gcc thread.c -lphthread
+$gcc thread.c -lpthread
 ```
 ### TASK 01
 
