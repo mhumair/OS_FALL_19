@@ -50,14 +50,18 @@ int pthread_create(thread_id,
 		   thread_arg);
 
 ```
+
+- thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
 ```c
 	pthread_t thread_id;
 ```
-- thread_id		: When pthread_create returns successfully this variable will have all the newly created thread's 			    id.
-```c
-	NULL
-```
+
 - thread_attributes	: This attr argument is used to customize various thread attributes. We’ll cover thread attributes 			     later. For now, we’ll set this to NULL to create a thread with the default attributes.
+```c
+	pass NULL in the place of thread_attributes
+```
+
+- thread_function 	: The newly created thread runs this function when it starts. 
 ```c
 	void *thread_function(void* no)
 	{
@@ -66,14 +70,13 @@ int pthread_create(thread_id,
         
 	}
 ```
-- thread_function 	: The newly created thread runs this function when it starts. 
-```c
-	int thread_arg = 55;
-```
+
 - thread_arg		: The function takes only a single argument for now . If you need to
 			  pass more than one argument to thread_function, then you need to store them in a
 			  structure and pass the address of the structure as thread_arg.
-
+```c
+	int thread_arg = 55;
+```
 **NOTE**
 When a thread is created, there is no guarantee which will run first: the newly
 created thread or the calling thread. The newly created thread has access to the process
@@ -111,9 +114,50 @@ int main(int argc, char *argv[])
             printf("The value is %d \n",thread_arg);
 }
 ```
+**compilation**
 ```bash
 $gcc thread.c -lphthread
-`
+```
+### TASK 01
+
+- Create 10 threads & observe the output
+- Create 30 threads & observe the output
+- Create 50 threads & observe the output
+
+### TASK 02
+
+- Modify the thread_function to :
+```c
+void *thread_function(void* no)
+{
+        printf("The current thread is  %ld \n",pthread_self());  
+        int *no1 = (int*)no;
+        printf("The value was %d \n",*no1);
+        *no1 = *no1 + 1;
+        printf("The value is %d \n",*no1);
+}
+```
+- Now Repeat Task 01 & observe the output
 
 
+### SYNCHRONIZTION MECHANISMS
 
+When multiple threads of control share the same memory, we need to make sure that
+each thread sees a consistent view of its data. If each thread uses variables that other
+threads don’t read or modify, no consistency problems will exist. Similarly, if a variable
+is read-only, there is no consistency problem with more than one thread reading its
+value at the same time. However, when one thread can modify a variable that other
+threads can read or modify, we need to synchronize the threads to ensure that they
+don’t use an invalid value when accessing the variable’s memory contents.
+
+To solve this problem, the threads have to use a lock that will allow only one thread
+to access the variable at a time. For example Let's say a thread A reads a variable and then writes a new value
+to it, but the write operation takes two memory cycles. If thread B reads the same
+variable between the two write cycles, it will see an inconsistent value.
+If thread A wants to read the variable, thread A acquires a lock. Similarly, when thread A updates the variable, it acquires the same lock. Thus thread B will be unable to read the variable
+until thread A releases the lock.
+
+
+**MUTEX LOCK**
+
+**SEMAPHORES**
